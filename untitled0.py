@@ -1,4 +1,5 @@
 import os
+import csv
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
@@ -27,6 +28,10 @@ fig1, ax1 = plt.subplots(2, 2)
 lw=1
 window_size=81
 
+feature_csv = open('features.csv','w')
+writer = csv.writer(feature_csv,lineterminator='\n')
+writer.writerow(['Feature','Max Freq','Desv Pad'])
+
 ax[0, 0].set_title("Relaxado")
 ax1[0, 0].set_title("Relaxado")
 print('-----------RELAXADO-----------')
@@ -39,6 +44,7 @@ for i in rel:
     ax1[0, 0].plot(arraytest/arraytest.std(),alpha=0.5,linewidth=lw)
     ax[0, 0].plot(freq[freq>0],signal.medfilt(fft1[freq>=0]/fft1.std(),kernel_size=window_size),alpha=0.8,linewidth=lw)
     print('STD:\t',signal.medfilt(fft1[freq>=0]/fft1.std()).std())
+    writer.writerow(['rel',freq[fft1.argmax()],signal.medfilt(fft1[freq>=0]/fft1.std()).std()])
 
 print('-----------PEDRA-----------')
 ax[0, 1].set_title("Pedra")
@@ -52,6 +58,7 @@ for i in pedra:
     ax1[0, 1].plot(arraytest/arraytest.std(),alpha=0.5,linewidth=lw)
     ax[0, 1].plot(freq[freq>=0], signal.medfilt(fft1[freq>=0]/fft1.std(),kernel_size=window_size),alpha=0.8,linewidth=lw)
     print('STD:\t',signal.medfilt(fft1[freq>=0]/fft1.std()).std())
+    writer.writerow(['pedra',freq[fft1.argmax()],signal.medfilt(fft1[freq>=0]/fft1.std()).std()])
  
 
 print('-----------PAPEL-----------') 
@@ -66,7 +73,7 @@ for i in papel:
     ax1[1, 0].plot(arraytest/arraytest.std(),alpha=0.5,linewidth=lw)
     ax[1, 0].plot(freq[freq>=0], signal.medfilt(fft1[freq>=0]/fft1.std(),kernel_size=window_size),alpha=0.8,linewidth=lw)
     print('STD:\t',signal.medfilt(fft1[freq>=0]/fft1.std()).std())
-
+    writer.writerow(['papel',freq[fft1.argmax()],signal.medfilt(fft1[freq>=0]/fft1.std()).std()])
 
 print('-----------TESOURA-----------')
 ax[1, 1].set_title("Tesoura")
@@ -80,8 +87,10 @@ for i in tesoura:
     ax1[1, 1].plot(arraytest/arraytest.std(),alpha=0.5,linewidth=lw)
     ax[1, 1].plot(freq[freq>=0], signal.medfilt(fft1[freq>=0]/fft1.std(),kernel_size=window_size),alpha=0.8,linewidth=lw)
     print('STD:\t',signal.medfilt(fft1[freq>=0]/fft1.std()).std())
-
+    writer.writerow(['tes',freq[fft1.argmax()],signal.medfilt(fft1[freq>=0]/fft1.std()).std()])
+feature_csv.close()
 
 
 plt.show()
+
 
