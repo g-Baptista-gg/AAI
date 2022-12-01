@@ -30,7 +30,7 @@ window_size=81
 
 feature_csv = open('features.csv','w')
 writer = csv.writer(feature_csv,lineterminator='\n')
-writer.writerow(['Feature','Max Freq','Desv Pad'])
+writer.writerow(['Feature','Max Freq','Desv Pad', 'Max', 'Freq Med'])
 
 ax[0, 0].set_title("Relaxado")
 ax1[0, 0].set_title("Relaxado")
@@ -44,7 +44,7 @@ for i in rel:
     ax1[0, 0].plot(arraytest/arraytest.std(),alpha=0.5,linewidth=lw)
     ax[0, 0].plot(freq[freq>0],signal.medfilt(fft1[freq>=0]/fft1.std(),kernel_size=window_size),alpha=0.8,linewidth=lw)
     print('STD:\t',signal.medfilt(fft1[freq>=0]/fft1.std()).std())
-    writer.writerow(['rel',freq[fft1.argmax()],signal.medfilt(fft1[freq>=0]/fft1.std()).std()])
+    writer.writerow(['rel',freq[fft1.argmax()],signal.medfilt(fft1[freq>=0]/fft1.std()).std(), arraytest.max()/arraytest.std(), fft1[freq>=0].mean()])
 
 print('-----------PEDRA-----------')
 ax[0, 1].set_title("Pedra")
@@ -58,7 +58,7 @@ for i in pedra:
     ax1[0, 1].plot(arraytest/arraytest.std(),alpha=0.5,linewidth=lw)
     ax[0, 1].plot(freq[freq>=0], signal.medfilt(fft1[freq>=0]/fft1.std(),kernel_size=window_size),alpha=0.8,linewidth=lw)
     print('STD:\t',signal.medfilt(fft1[freq>=0]/fft1.std()).std())
-    writer.writerow(['pedra',freq[fft1.argmax()],signal.medfilt(fft1[freq>=0]/fft1.std()).std()])
+    writer.writerow(['pedra',freq[fft1.argmax()],signal.medfilt(fft1[freq>=0]/fft1.std()).std(), arraytest.max()/arraytest.std(), fft1[freq>=0].mean()])
  
 
 print('-----------PAPEL-----------') 
@@ -73,7 +73,7 @@ for i in papel:
     ax1[1, 0].plot(arraytest/arraytest.std(),alpha=0.5,linewidth=lw)
     ax[1, 0].plot(freq[freq>=0], signal.medfilt(fft1[freq>=0]/fft1.std(),kernel_size=window_size),alpha=0.8,linewidth=lw)
     print('STD:\t',signal.medfilt(fft1[freq>=0]/fft1.std()).std())
-    writer.writerow(['papel',freq[fft1.argmax()],signal.medfilt(fft1[freq>=0]/fft1.std()).std()])
+    writer.writerow(['papel',freq[fft1.argmax()],signal.medfilt(fft1[freq>=0]/fft1.std()).std(), arraytest.max()/arraytest.std(), fft1[freq>=0].mean()])
 
 print('-----------TESOURA-----------')
 ax[1, 1].set_title("Tesoura")
@@ -87,9 +87,15 @@ for i in tesoura:
     ax1[1, 1].plot(arraytest/arraytest.std(),alpha=0.5,linewidth=lw)
     ax[1, 1].plot(freq[freq>=0], signal.medfilt(fft1[freq>=0]/fft1.std(),kernel_size=window_size),alpha=0.8,linewidth=lw)
     print('STD:\t',signal.medfilt(fft1[freq>=0]/fft1.std()).std())
-    writer.writerow(['tes',freq[fft1.argmax()],signal.medfilt(fft1[freq>=0]/fft1.std()).std()])
+    writer.writerow(['tes',freq[fft1.argmax()],signal.medfilt(fft1[freq>=0]/fft1.std()).std(), arraytest.max()/arraytest.std(), fft1[freq>=0].mean()])
 feature_csv.close()
 
+plotdf = pd.read_csv('features.csv')
+#sns.relplot(data = plotdf, x = 'Max Freq', y = 'Desv Pad', hue = 'Feature')
+#sns.relplot(data = plotdf, x = 'Max', y = 'Desv Pad', hue = 'Feature')
+#sns.relplot(data = plotdf, x = 'Max Freq', y = 'Max', hue = 'Feature')
+
+sns.pairplot(data = plotdf, hue = 'Feature')
 
 plt.show()
 
