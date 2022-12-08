@@ -1,0 +1,127 @@
+<html>
+    <head>
+        <title>Pedra, Papel, Tesoura</title>
+    </head>
+
+    <script type = "text/javascript">
+        function displayNextImage() {
+            x = (x === images.length - 1) ? 0 : x + 1;
+            document.getElementById("img").src = images[x];
+        }
+
+        function startTimer() {
+            setInterval(displayNextImage, 500);
+        }
+
+        function playRPS(i) {
+            document.getElementById("img").src = images[i];
+            var pc = Math.random();
+            if (pc < 0.33)
+                document.getElementById("imgpc").src = images[0];
+            else if (pc < 0.66)
+                document.getElementById("imgpc").src = images[1];
+            else
+                document.getElementById("imgpc").src = images[2];
+            resultGame()
+        }
+
+        function resultGame() {
+            if (document.getElementById("img").src == document.getElementById("imgpc").src)
+                document.getElementById("result").innerHTML = "EMPATE";
+            else
+                document.getElementById("result").innerHTML = "U ARE POOPOO";
+        }
+
+        var images = [], x = -1;
+        images[0] = "static/classification_game_stone.png";
+        images[1] = "static/classification_game_paper.png";
+        images[2] = "static/classification_game_scissor.png";
+    </script>
+
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            border: 5 px solid black;
+            margin: 0 auto;
+            background-color: wheat;
+        }
+        img{
+            border: 3px solid black;
+            height: 300px;
+            width: 300px;
+        }
+    </style>
+
+    <body>
+        <script src = "https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity = "sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+
+        <!--Header of the web page-->
+        <h1 style = "float: center; text-align: center;">Pedra, Papel, Tesoura</h1>
+        <h4 style = "float: right; text-align: right; position: absolute; top: 5px; right: 5px;">Gonçalo&Grilo Inc.</h4>
+
+        <form style = 'height:5%; position: absolute; top: 10px; left: 10px;'>
+			Raspberry IP:<br>
+			<input style:'display:inline' type = "text" value = '' id = 'raspIP'>
+			<input style:'display:inline' type = "button" onclick = raspConnect() value = "Connect!">
+		</form>
+
+        <!--Body of the web page-->
+        <p style="text-align: center; vertical-align: middle; float:center;">
+            <figure style = "position: absolute; left: 200px; top: 100px;">
+                <figcaption style = "text-align:center;">TU</figcaption> 
+                <img id = "img" src = "static/classification_game_scissor.png">
+            </figure>  
+
+            <h2 id = "result" style = "text-align: center; float: center; position: absolute; top: 240px; width: 100%;">PERDESTE :(</h2>
+
+            <figure style = "position: absolute; right: 200px; top: 100px;">  
+                <figcaption style = "text-align:center;">COMPUTADOR</figcaption> 
+                <img id = "imgpc" src = "static/classification_game_stone.png">
+            </figure>  
+        </p>
+
+        <input style:'display:inline' type = "button" onclick = playRPS(0) value = "Pedra" id = "pedbut">
+        <input style:'display:inline' type = "button" onclick = playRPS(1) value = "Papel" id = "papbut">
+        <input style:'display:inline' type = "button" onclick = playRPS(2) value = "Tesoura" id = "tesbut">
+
+        <!--Script-->
+        <script type = "text/javascript" charset = "utf-8">
+        	// To help you connecting to the RPi, the input form value is populated automatically using the current URL.
+			window_url = window.location.href.split(':')[1].substring(2)
+			document.getElementById("raspIP").value = window_url
+
+			function raspConnect(){
+
+                // Initialize the socket
+                var socket = io(document.getElementById("raspIP").value + ':5000/');
+
+                // This function is called after the socket is initiated
+                socket.on('connect', function() {
+
+                    // Upon a successful connection it starts sending data requests periodically to the server
+                    interval = setInterval(function(){
+                            socket.emit('sendData', JSON.stringify({type:'sendData'}))
+                            }, 1000);
+
+                    console.log("DEBUG: A sendData request was sent to the server.");
+
+                });
+
+                // This function reads the server message and updates the random integer in the web page
+                socket.on('serverResponse', function(msg) {
+                    console.log("DEBUG: A serverResponse was received by the client.");
+                    document.getElementById("random_integer").innerHTML = msg.data;
+                });
+
+                // This handles any error, like connection drops.
+                socket.on('connect_error', function (event) {
+                    alert('Can not connect to the server.\nIs the raspberry IP correct?\nIs the server running?\nAre you connect to the "PI" network?');
+                    console.log('Loss of connection event');
+                    clearInterval(interval);
+                    socket.close();
+                });
+
+            }
+        </script>
+    </body>
+</html>
