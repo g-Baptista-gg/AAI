@@ -1,0 +1,11 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    border: 5 px solid black;
+    margin: 0 auto;
+    background-color: wheat;
+}
+img {
+    border: 3px solid black;
+    height: 300px;
+    width: 300px;
+}
