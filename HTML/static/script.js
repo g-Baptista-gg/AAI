@@ -33,17 +33,14 @@ function raspConnect(){
     // This function is called after the socket is initiated
     socket.on('connect', function() {
         // Upon a successful connection it starts sending data requests periodically to the server
-        interval = setInterval(function(){
-            socket.emit('sendData', JSON.stringify({type:'sendData'}))
-        }, 1000);
-    
+        socket.emit('sendData', JSON.stringify({type:'sendData'}));
         console.log("DEBUG: A sendData request was sent to the server.");
     });
 
     // This function reads the server message and updates the random integer in the web page
     socket.on('serverResponse', function(msg) {
         console.log("DEBUG: A serverResponse was received by the client.");
-        document.getElementById("random_integer").innerHTML = msg.data;
+        playerRPS(msg.data);
     });
 
     // This handles any error, like connection drops.

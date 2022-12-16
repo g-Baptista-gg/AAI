@@ -4,18 +4,18 @@ import numpy as np
 import os
 import csv
 
-files_relaxado = os.listdir(os.getcwd()+'/Relaxado')[1::2]
-files_pedra = os.listdir(os.getcwd()+'/Pedra')[1::2]
-files_papel = os.listdir(os.getcwd()+'/Papel')[1::2]
-files_tesoura = os.listdir(os.getcwd()+'/Tesoura')[1::2]
+files_relaxado = os.listdir(os.getcwd() + '/Relaxado')[1::2]
+files_pedra = os.listdir(os.getcwd() + '/Pedra')[1::2]
+files_papel = os.listdir(os.getcwd() + '/Papel')[1::2]
+files_tesoura = os.listdir(os.getcwd() + '/Tesoura')[1::2]
 
-rel = [pd.read_csv(os.getcwd()+'/Relaxado/'+i, header = 3, delimiter = '\t')for i in files_relaxado]
-pedra = [pd.read_csv(os.getcwd()+'/Pedra/'+i, header = 3, delimiter = '\t')for i in files_pedra]
-papel = [pd.read_csv(os.getcwd()+'/Papel/'+i, header = 3, delimiter = '\t')for i in files_papel]
-tesoura = [pd.read_csv(os.getcwd()+'/Tesoura/'+i, header = 3, delimiter = '\t')for i in files_tesoura]
+rel = [pd.read_csv(os.getcwd() + '/Relaxado/' + i, header = 3, delimiter = '\t')for i in files_relaxado]
+pedra = [pd.read_csv(os.getcwd() + '/Pedra/' + i, header = 3, delimiter = '\t')for i in files_pedra]
+papel = [pd.read_csv(os.getcwd() + '/Papel/' + i, header = 3, delimiter = '\t')for i in files_papel]
+tesoura = [pd.read_csv(os.getcwd() + '/Tesoura/' + i, header = 3, delimiter = '\t')for i in files_tesoura]
 
 feature_csv = open('features1.csv','w')
-writer = csv.writer(feature_csv,lineterminator='\n')
+writer = csv.writer(feature_csv, lineterminator = '\n')
 
 # load dataset
 df = pd.read_csv('Papel/opensignals_201805286295_2022-11-29_15-03-12.txt', skiprows = (3), header = None, delimiter = '\t')
@@ -35,8 +35,8 @@ for i in rel:
     df = np.array(i.iloc[:, 5])
     df = df - df.mean()
     X = tsfel.time_series_features_extractor(cfg, df)
-    X = np.array(X)
-    X = X.tolist()
+    #X = np.array(X)
+    X = X.values.tolist()
     Y = ["relaxado"]
     for i in X[0]:
         Y.append(i)
@@ -52,6 +52,7 @@ for i in pedra:
     Y = ["pedra"]
     for i in X[0]:
         Y.append(i)
+    print(type(Y))
     writer.writerow(Y)
  
 
