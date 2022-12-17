@@ -31,6 +31,11 @@ for i in X:
     Y.append(i)
 writer.writerow(Y)
 
+features_to_save=[]
+for i in range(len(Y)):
+    if Y[i] in ["0_Sum absolute diff","0_Median absolute diff","0_Signal distance","0_FFT mean coefficient_177","0_FFT mean coefficient_194","0_Wavelet variance_0","0_Wavelet standard deviation_0","0_Wavelet energy_0","0_FFT mean coefficient_58","0_LPCC_11"]:
+        features_to_save.append(i)
+
 for i in rel:
     df = np.array(i.iloc[:, 5])
     df = df - df.mean()
