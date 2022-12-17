@@ -6,27 +6,6 @@ import csv
 import tsfel
 from bitalino import BITalino
 
-# The macAddress variable on Windows can be "XX:XX:XX:XX:XX:XX" or "COMX"
-# while on Mac OS can be "/dev/tty.BITalino-XX-XX-DevB" for devices ending with the last 4 digits of the MAC address or "/dev/tty.BITalino-DevB" for the remaining
-macAddress = "20:18:05:28:73:28"
-
-batteryThreshold = 30
-acqChannels = [1]
-samplingRate = 1000
-nSamples = 50
-
-# Connect to BITalino
-device = BITalino(macAddress)
-
-# Set battery threshold
-device.battery(batteryThreshold)
-
-# Read BITalino version
-print(device.version())
-
-# Start Acquisition
-device.start(samplingRate, acqChannels)
-
 files_relaxado = os.listdir(os.getcwd() + '/Relaxado')[1::2]
 files_pedra = os.listdir(os.getcwd() + '/Pedra')[1::2]
 files_papel = os.listdir(os.getcwd() + '/Papel')[1::2]
@@ -54,15 +33,6 @@ def is_relaxed(df, threshold):
     else:
         return True
 
-while True:
-    # Read samples
-    sample = device.read(nSamples) - 512
-    window = np.roll(window, -50)
-    window[950:] = sample[:, 5]
-    print(sample[:, 5])
-    print(is_relaxed(window, 30))
-    input(i)
-
 cfg = tsfel.get_features_by_domain()
 
 #X = tsfel.time_series_features_extractor(cfg, df)
@@ -80,11 +50,17 @@ maximus = []
 for i in rel:
     df = np.array(i.iloc[:, 5])
     df = abs(df - df.mean())
-    maximus.append(max(df))
+    maximus.append(max(abs(df)))
+    X = tsfel.time_series_features_extractor(cfg, df)
+    X = X.values.tolist()
+    Y = ["relaxado"]
+    for i in X[0]:
+        Y.append(i)
+    writer.writerow(Y)
     #ax[0].plot(df)
 
 threshold = max(maximus)
-#print(threshold)
+print(threshold)
 
 def cut2(df, threshold):
     for i in range(len(df)):
@@ -136,11 +112,3 @@ for i in tesoura:
     #ax[1].plot(cut(df, threshold))
 
 feature_csv.close()
-
-#plt.show()
-
-# Stop acquisition
-device.stop()
-
-# Close connection
-device.close()
