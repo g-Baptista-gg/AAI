@@ -66,7 +66,7 @@ cm = np.zeros((4, 4))
 #clf = svm.SVC(kernel='rbf')
 clf=ensemble.RandomForestClassifier()
 #clf=ensemble.GradientBoostingClassifier()
-for i in range(10):
+for i in range(100):
     X_train, X_test, y_train, y_test = train_test_split(xTestList, yTestList, test_size = 0.33, shuffle = True)
     #print(y_test)
 
@@ -78,10 +78,11 @@ for i in range(10):
 
     disp = metrics.ConfusionMatrixDisplay.from_predictions(y_test, predicted)
     cm += disp.confusion_matrix
-    disp.figure_.suptitle("Confusion Matrix")
+    #disp.figure_.suptitle("Confusion Matrix")
 #print(disp.confusion_matrix())
 for i in range(len(cm)):
     cm[i]/=cm[i].sum()
 print(f"Confusion matrix:\n{cm}")
+
 
 #
