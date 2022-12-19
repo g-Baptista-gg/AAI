@@ -33,17 +33,36 @@ def is_relaxed(df, threshold):
     else:
         return True
 
+def featureExtraction(signal):
+    features = []
+
+    fftMean = tsfel.feature_extraction.features.fft_mean_coeff(signal, 1000)
+    features.append(fftMean[52])
+    features.append(fftMean[69])
+    features.append(fftMean[117])
+    features.append(fftMean[177])
+    features.append(fftMean[199])
+    features.append(fftMean[218])
+    features.append(tsfel.feature_extraction.features.spectral_roll_on(signal, 1000))
+
+    histogram = tsfel.feature_extraction.features.hist(signal)
+    features.append(histogram[8])
+    features.append(tsfel.feature_extraction.features.distance(signal))
+    features.append(tsfel.feature_extraction.features.sum_abs_diff(signal))
+
+    return features
+
 cfg = tsfel.get_features_by_domain()
 
-#X = tsfel.time_series_features_extractor(cfg, df)
-#X = X.head()
-#Y = ["Feature"]
-#for i in X:
-#    Y.append(i)
-#print(type(Y))
-#writer.writerow(Y)
+# X = tsfel.time_series_features_extractor(cfg, df)
+# X = X.head()
+# Y = ["Feature"]
+# for i in X:
+#     Y.append(i)
+# print(type(Y))
+# writer.writerow(Y)
 
-fig, ax = plt.subplots(2, sharex=True)
+fig, ax = plt.subplots(2, sharex = True)
 
 maximus = []
 
@@ -51,10 +70,11 @@ for i in rel:
     df = np.array(i.iloc[:, 5])
     df = abs(df - df.mean())
     maximus.append(max(abs(df)))
-    X = tsfel.time_series_features_extractor(cfg, df)
-    X = X.values.tolist()
+    X = featureExtraction(df)
+    #X = tsfel.time_series_features_extractor(cfg, df)
+    #X = X.values.tolist()
     Y = ["relaxado"]
-    for i in X[0]:
+    for i in X:
         Y.append(i)
     writer.writerow(Y)
     #ax[0].plot(df)
@@ -75,11 +95,12 @@ def cut(df, threshold):
 for i in pedra:
     df = np.array(i.iloc[:, 5])
     df = df - df.mean()
-    X = tsfel.time_series_features_extractor(cfg, cut(df, threshold))
+    X = featureExtraction(df)
+    #X = tsfel.time_series_features_extractor(cfg, cut(df, threshold))
     #X = np.array(X)
-    X = X.values.tolist()
+    #X = X.values.tolist()
     Y = ["pedra"]
-    for i in X[0]:
+    for i in X:
         Y.append(i)
     writer.writerow(Y)
     #ax[0].plot(cut2(df, threshold))
@@ -88,11 +109,12 @@ for i in pedra:
 for i in papel:
     df = np.array(i.iloc[:, 5])
     df = df - df.mean()
-    X = tsfel.time_series_features_extractor(cfg, cut(df, threshold))
-    X = np.array(X)
-    X = X.tolist()
+    X = featureExtraction(df)
+    #X = tsfel.time_series_features_extractor(cfg, cut(df, threshold))
+    #X = np.array(X)
+    #X = X.tolist()
     Y = ["papel"]
-    for i in X[0]:
+    for i in X:
         Y.append(i)
     writer.writerow(Y)
     #ax[0].plot(cut2(df, threshold))
@@ -101,11 +123,12 @@ for i in papel:
 for i in tesoura:
     df = np.array(i.iloc[:, 5])
     df = df - df.mean()
-    X = tsfel.time_series_features_extractor(cfg, cut(df, threshold))
-    X = np.array(X)
-    X = X.tolist()
+    X = featureExtraction(df)
+    #X = tsfel.time_series_features_extractor(cfg, cut(df, threshold))
+    #X = np.array(X)
+    #X = X.tolist()
     Y = ["tesoura"]
-    for i in X[0]:
+    for i in X:
         Y.append(i)
     writer.writerow(Y)
     #ax[0].plot(cut2(df, threshold))

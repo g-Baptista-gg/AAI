@@ -8,6 +8,7 @@ from flask import Flask, render_template
 from flask_socketio import SocketIO, emit
 from sklearn import datasets, svm, metrics
 from sklearn.model_selection import train_test_split
+import csv
 
 cfg = tsfel.get_features_by_domain()
 
@@ -20,6 +21,9 @@ def cut(df, threshold):
 xTestList = []
 yTestList = []
 maximus = []
+
+feature_csv = open('features2.csv','w')
+writer = csv.writer(feature_csv, lineterminator = '\n')
 
 def getTestFeatures(nameClass, xTestList, yTestList, maximus):
     global threshold

@@ -7,7 +7,6 @@ import csv
 from sklearn import datasets, svm, ensemble, metrics
 from sklearn.model_selection import train_test_split
 from bitalino import BITalino
-import time
 
 def featureExtraction(activation, postActivation):
     features = np.array([tsfel.feature_extraction.features.auc(abs(activation), 1000),
@@ -76,25 +75,18 @@ clf = ensemble.RandomForestClassifier()
 
 clf.fit(xTestList, yTestList)
 
-# The macAddress variable on Windows can be "XX:XX:XX:XX:XX:XX" or "COMX"
-# while on Mac OS can be "/dev/tty.BITalino-XX-XX-DevB" for devices ending with the last 4 digits of the MAC address or "/dev/tty.BITalino-DevB" for the remaining
 macAddress = "20:18:05:28:73:33"
 
-# This example will collect data for 5 sec.
-running_time = 5
-
-batteryThreshold = 30
+#batteryThreshold = 30
 acqChannels = [0]
 samplingRate = 1000
-nSamples = 5000
-digitalOutput_on = [1, 1]
-digitalOutput_off = [0, 0]
+nSamples = 500
 
 # Connect to BITalino
 device = BITalino(macAddress)
 
 # Set battery threshold
-device.battery(batteryThreshold)
+#device.battery(batteryThreshold)
 
 # Read BITalino version
 print(device.version())
@@ -102,40 +94,38 @@ print(device.version())
 # Start Acquisition
 device.start(samplingRate, acqChannels)
 
-sample = []
+def is_relaxed(df, threshold):
+    for i in abs(df):
+        if i > (1.1 * threshold):
+            return False
+    else:
+        return True
 
-start = time.time()
-end = time.time()
-while (end - start) < running_time:
+turnOff = False
+window = np.zeros(5000)
+
+sample = device.read(5000)
+window = sample[:, 5]
+
+while True:
     # Read samples
     sample = device.read(nSamples)
-    #print(device.read(nSamples))
-    end = time.time()
+    window = np.roll(window, -nSamples)
+    window[(5000 - nSamples):] = sample[:, 5]
+    window2 = window - window.mean()
+    if not is_relaxed(window2[:2999], threshold):
+        act, post = signalParts(window2, threshold)
+        features = featureExtraction(act, post)
+        predicted = clf.predict(features)
+        #print(predicted)
 
-# Turn BITalino led and buzzer on
-#device.trigger(digitalOutput_on)
-
-signal = sample[:, 5]
-signal= np.array([float(i) for i in signal])
-
-signal -= signal.mean()
-
-act, pos = signalParts(signal, threshold)
-
-ft = featureExtraction(act, pos)
-
-predicted = clf.predict(ft.reshape(1,-1))
-print(predicted)
-
-#print(sample)
-
-#plt.ylim(0, 1024)
-
-# Script sleeps for n seconds
-time.sleep(running_time)
-
-# Turn BITalino led and buzzer off
-#device.trigger(digitalOutput_off)
+    if (predicted != "Relaxado" and is_relaxed(window2[:10])):
+        #features = featureExtraction(signalParts(window2))
+        #predicted = clf.predict(features)
+        predicted='Relaxado'
+    print(predicted)
+    if turnOff:
+        break
 
 # Stop acquisition
 device.stop()
