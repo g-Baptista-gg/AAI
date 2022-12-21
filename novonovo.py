@@ -7,6 +7,8 @@ import csv
 from sklearn import datasets, svm, ensemble, metrics
 from sklearn.model_selection import train_test_split
 from bitalino import BITalino
+from flask import Flask, render_template
+from flask_socketio import SocketIO, emit, send
 
 def featureExtraction(activation, postActivation):
     features = np.array([tsfel.feature_extraction.features.auc(abs(activation), 1000),
@@ -36,6 +38,8 @@ def signalParts(df, threshold):
     for i in range(len(df)):
         if df[i] > (1.1 * threshold):
             return df[i:(i + 500)], df[(i + 500):(i + 2000)]
+    else:
+        return df[:500],df[500:2000]
 #Cuts part of the signal
 def signalParts2(df, threshold):
     return df[0: 500], df[500:2000]
@@ -106,46 +110,87 @@ turnOff = False
 window = np.zeros(5000)
 
 window = np.zeros(2000)
+meanWindow=512*np.ones(100)
 relaxWindow = []
 nSig=0
 activated=False
-while True:
+mean=512
+
+def predInt(predicted):
+    if (predicted[0] == 'Relaxado'):
+        return 0
+    elif (predicted[0] == 'Pedra'):
+        return 1
+    elif (predicted[0] == 'Papel'):
+        return 2
+    else:
+        return 3
+
+
+#while True:
+def classify():
+    global window
+    global mean
+    global relaxWindow
+    global activated
+    global meanWindow
+    global nSig
+
     # Read samples
     sample = device.read(1)[0,5]
-    if activated==False:
+    if activated == False:
         #print(abs(sample-512), '\t',1.2*threshold)
-        if abs(sample-512)>=1.1*threshold:
-            window[nSig]=sample
-            activated=True
-            nSig+=1
+        if abs(sample - mean) >= 1.1 * threshold:
+            window[nSig] = sample
+            activated = True
+            nSig += 1
+        else:
+            meanWindow = np.roll(meanWindow,1)
+            meanWindow[0] = sample
+            mean = meanWindow.mean()
     else:
-        if nSig==2000:
-            window-=window.mean()
-            sigAc,sigPos=signalParts2(window,threshold)
-            features=featureExtraction(sigAc,sigPos)
-            predicted=clf.predict(features.reshape(1,-1))
-            print('1 - ',predicted)
-            nSig+=1
-        elif nSig<2000:
-            window[nSig]=sample
-            nSig+=1
+        if nSig == 2000:
+            window -= window.mean()
+            sigAc,sigPos = signalParts2(window,threshold)
+            features = featureExtraction(sigAc,sigPos)
+            predicted = clf.predict(features.reshape(1,-1))
+            nSig += 1
+            return predInt(predicted)
+        elif nSig < 2000:
+            window[nSig] = sample
+            nSig += 1
         else:
             #print(sample)
             relaxWindow.append(sample)
-            window=np.zeros(2000)
-            if len(relaxWindow)>500:
-                print(max(np.abs(np.array(relaxWindow)-512)))
-                if max(np.abs(np.array(relaxWindow)-512))<0.9*threshold:
-                    activated=False
-                    predicted='Relaxado'
+            window = np.zeros(2000)
+            if len(relaxWindow) > 500:
+                #print(max(np.abs(np.array(relaxWindow)-mean)))
+                if max(np.abs(np.array(relaxWindow)-mean)) < threshold:
+                    activated = False
+                    predicted = ['Relaxado']
                     print('2 - ', predicted)
-                    nSig=0
+                    print(mean)
+                    nSig = 0
+                    return predInt(predicted)
                 relaxWindow.pop(0)
+    return -1
+
+app = Flask(__name__)
+socketio = SocketIO(app)
+
+@app.route("/")
+def sessions():
+    return render_template('index.html')
+
+@socketio.on('sendData')
+def handle_my_custom_event(json):
+    emit('serverResponse', {'data': classify()})
+
+if __name__ == '__main__':
+    socketio.run(app, debug = True)
         
-
-
 # Stop acquisition
-device.stop()
+#device.stop()
 
 # Close connection
-device.close()
+#device.close()

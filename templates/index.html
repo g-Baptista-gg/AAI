@@ -1,0 +1,75 @@
+<html>
+    <head>
+        <title>Pedra, Papel, Tesoura</title>
+        <script src = "static/script.js" type = "text/javascript" charset = "utf-8"></script>
+        <link rel = "stylesheet" href = "static/styles.css">
+        <script src = "https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity = "sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        
+    </head>
+    <body>
+        <!--Header of the web page-->
+        <h1 style = "float: center; text-align: center;">Pedra, Papel, Tesoura</h1>
+        <h4 style = "float: right; text-align: right; position: fixed; top: 5px; right: 5px;">Gonçalo&Grilo Inc.</h4>
+
+        <form style = 'height:5%; position: fixed; top: 10px; left: 10px;'>
+			Raspberry IP:<br>
+			<input style:'display:inline' type = "text" value = '' id = 'raspIP'>
+			<input style:'display:inline' type = "button" onclick = raspConnect() value = "Connect!">
+		</form>
+
+        <!--Body of the web page-->
+        <p style="text-align: center; vertical-align: middle; float:center;">
+            <figure style = "position: absolute; left: 200px; top: 100px;">
+                <figcaption style = "text-align:center;">TU</figcaption> 
+                <img id = "img" src = "static/smile.png">
+            </figure>  
+
+            <h2 id = "result" style = "text-align: center; float: center; position: absolute; top: 240px; width: 100%;">COMEÇA A JOGAR</h2>
+
+            <figure style = "position: absolute; right: 200px; top: 100px;">  
+                <figcaption style = "text-align:center;">COMPUTADOR</figcaption> 
+                <img id = "imgpc" src = "static/smile.png">
+            </figure>  
+        </p>
+
+        <input style:'display:inline' type = "button" onclick = playRPS(1) value = "Pedra" id = "pedbut">
+        <input style:'display:inline' type = "button" onclick = playRPS(2) value = "Papel" id = "papbut">
+        <input style:'display:inline' type = "button" onclick = playRPS(3) value = "Tesoura" id = "tesbut">
+        <input style:'display:inline' type = "button" onclick = raspConnect() value = "Jogar" id = "play">
+        <div class="scoreboard">
+            <h1>Scoreboard</h1>
+            <table>
+              <thead>
+                <tr>
+                  <th>Player</th>
+                  <th>Score</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Player</td>
+                  <td id="playerScore">0</td>
+                </tr>
+                <tr>
+                  <td>Computer</td>
+                  <td id="pcScore">0</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="2">Final Score</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        <h2 class="toggle">Toggle Hacks</h2>
+        <input id="godmode" type="checkbox" class="toggle-button">
+        <label class="handle"></label>  
+    </body>
+    <script>
+        window_url = window.location.href.split(':')[1].substring(2)
+        document.getElementById("raspIP").value = window_url
+    </script>
+</html>
