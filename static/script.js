@@ -76,6 +76,7 @@ function raspConnect(){
     socket.on('serverResponse', function(msg) {
         console.log("DEBUG: A serverResponse was received by the client.");
         playRPS(parseInt(msg.data));
+        socket.close()
     });
 
     // This handles any error, like connection drops.
