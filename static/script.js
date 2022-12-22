@@ -1,3 +1,28 @@
+var arr = Array.from({length: 3000}, (item, index) => index);
+var y = Array.of(3000)
+
+for (let i = 0; i < 3000; i++) {
+    y[i] = 1;
+}
+
+function plotData() {
+    var data = {
+        // A labels array that can contain any sort of values. It will be your x_labels
+        labels: arr,
+        // Our series array that contains series objects or in this case series data arrays
+        series: [
+            y
+        ]
+        };
+
+        var options = {
+            width: '800px',
+            height: '300px',
+        };
+
+    var chart = new Chartist.Line('#chart', data, options);
+};
+
 var images = [], x = -1;
 images[0] = "static/classification_game_stone.png";
 images[1] = "static/classification_game_paper.png";
@@ -44,19 +69,20 @@ function playRPS(i) {
     }
     else if (i == 0)
         document.getElementById("img").src = images[3];
+        document.getElementById("result").innerHTML = "PLEASE, MAKE A MOVE";
 
 }
 
 function resultGame(player, pc) {
     if (player == pc)
-        document.getElementById("result").innerHTML = "EMPATE";
+        document.getElementById("result").innerHTML = "DRAW";
     else if (player == (pc - 1) || (player == 3 && pc == 1)) {
-        document.getElementById("result").innerHTML = "PERDESTE :(";
+        document.getElementById("result").innerHTML = "YOU LOST :(";
         pcScore++;
         document.getElementById("pcScore").innerHTML = pcScore;
     }
     else {
-        document.getElementById("result").innerHTML = "FÁCIL :P";
+        document.getElementById("result").innerHTML = "EZ GAME :P";
         playerScore++;
         document.getElementById("playerScore").innerHTML = playerScore;
     }
@@ -76,6 +102,11 @@ function raspConnect(){
     socket.on('serverResponse', function(msg) {
         console.log("DEBUG: A serverResponse was received by the client.");
         playRPS(parseInt(msg.data));
+        y = msg.signal;
+        for (var i = 0; i < length; i++)
+            numberArray.push(parseInt(y[i]));
+        chart.data.series[0] = y;
+        chart.update()
         socket.close()
     });
 
@@ -86,4 +117,4 @@ function raspConnect(){
         clearInterval(interval);
         socket.close();
     });
-}
+};

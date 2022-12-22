@@ -23,7 +23,7 @@ body {
 .toggle {
     float: right;
     text-align: right;
-    position: absolute;
+    position: fixed;
     bottom: 40px;
     right: 90px;
     margin: 0;
@@ -91,7 +91,7 @@ body {
 /* Set the overall style for the toggle button */
 .toggle-button {
     display: inline-block;
-    position: absolute;
+    position: fixed;
     bottom: 20px;
     right: 20px;
     width: 60px;
@@ -161,5 +161,28 @@ body {
     opacity: 0;
   }
   
+.plot {
+  position: absolute; 
+  top: 750px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #fff;
+  border: 1px solid #333;
+  border-radius: 4px;
+  width: 800px;
+  height: 300px;
+}
 
-  
+.buttons{
+  position: absolute;
+  top: 60px;
+  left: 10px;
+}
+
+.playButton{
+  width: 175px;
+  height: 50px;
+  position: absolute;
+  top: 90px;
+  left: 10px;
+}
