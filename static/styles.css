@@ -1,0 +1,188 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    border: 5 px solid black;
+    margin: 0 auto;
+    background-color: wheat;
+}
+
+img {
+    border: 3px solid #333;
+    border-radius: 4px;
+    height: 300px;
+    width: 300px;
+}
+
+            /* Set the overall font and text color for the scoreboard */
+        /* Set the overall font and text color for the scoreboard */
+/* Set the overall font and text color for the scoreboard */
+body {
+    font-family: sans-serif;
+    color: #333;
+  }
+
+.toggle {
+    float: right;
+    text-align: right;
+    position: fixed;
+    bottom: 40px;
+    right: 90px;
+    margin: 0;
+}
+  
+  /* Set the background color and border for the scoreboard */
+  .scoreboard {
+    background-color: wheat;
+    border: 1px solid black;
+    border-radius: 4px;
+    padding: 20px;
+    width: 500px;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  /* Set the style for the scoreboard header */
+  .scoreboard h1 {
+    text-align: center;
+    font-size: 24px;
+    font-weight: normal;
+    margin: 0 0 20px 0;
+  }
+  
+  /* Set the style for the scoreboard table */
+  .scoreboard table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  /* Set the style for the table cells */
+  .scoreboard td,
+  .scoreboard th {
+    border: 1px solid #ccc;
+    padding: 10px;
+  }
+  
+  /* Set the style for the table header cells */
+  .scoreboard th {
+    background-color: #333;
+    color: #fff;
+    font-size: 18px;
+  }
+  
+  /* Set the style for the table data cells */
+  .scoreboard td {
+    font-size: 16px;
+    text-align: center;
+  }
+  
+  /* Set the style for the table footer row */
+  .scoreboard tfoot tr {
+    background-color: #333;
+    color: #fff;
+  }
+  
+  /* Set the style for the table footer cells */
+  .scoreboard tfoot td {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+/* Set the overall style for the toggle button */
+.toggle-button {
+    display: inline-block;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #ccc;
+    cursor: pointer;
+  }
+  
+  /* Set the style for the toggle button handle */
+  .toggle-button input {
+    display: none;
+  }
+  
+  .toggle-button .handle {
+    display: block;
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s;
+  }
+  
+  /* Set the style for the toggle button when it's checked */
+  .toggle-button input:checked + .handle {
+    left: calc(100% - 44px - 8px);
+  }
+  
+  /* Set the style for the toggle button label */
+  .toggle-button .handle::before {
+    content: "Toggle Hacks";
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 14px;
+    font-weight: bold;
+    color: #fff;
+    opacity: 0;
+    transition: all 0.2s;
+  }
+  
+  .toggle-button .handle::after {
+    content: "Toggle Hacks";
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 14px;
+    font-weight: bold;
+    color: #fff;
+    opacity: 1;
+    transition: all 0.2s;
+  }
+  
+  .toggle-button input:checked + .handle::before {
+    opacity: 1;
+  }
+  
+  .toggle-button input:checked + .handle::after {
+    opacity: 0;
+  }
+  
+.plot {
+  position: absolute; 
+  top: 750px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #fff;
+  border: 1px solid #333;
+  border-radius: 4px;
+  width: 800px;
+  height: 300px;
+}
+
+.buttons{
+  position: absolute;
+  top: 60px;
+  left: 10px;
+}
+
+.playButton{
+  width: 175px;
+  height: 50px;
+  position: absolute;
+  top: 90px;
+  left: 10px;
+}
